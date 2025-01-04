@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO APP</title>
+
+    <!-- Inline CSS Styles -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+
+        .welcome-text {
+            font-size: 18px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            text-decoration: none;
+            color: #FF6347;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            color: #FF4500;
+        }
+
+        /* Form Styles */
+        .todo-form-container {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .todo-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        .task-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .task-input:focus {
+            border-color: #45a049;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Task List Styles */
+        .task-list {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .task-item {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-item.completed {
+            background-color: #e0f5e0;
+        }
+
+        .task-item.completed h3 {
+            text-decoration: line-through;
+            color: #4CAF50;
+        }
+
+        .task-item h3 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .delete-form {
+            margin: 0;
+        }
+
+        .delete-btn {
+            background-color: #FF6347;
+            color: white;
+            font-size: 14px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-btn:hover {
+            background-color: #FF4500;
+        }
+
+        /* Message Styles */
+        .messages {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .messages ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .messages li {
+            background-color: #eaf5e0;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>TODO APP</h1>
+
+    <!-- User Information and Logout Button -->
+    <p class="welcome-text">Welcome, {{ user.username }}! <a href="{% url 'logout' %}" class="logout-btn">Logout</a></p>
+
+    <!-- Task Addition Form -->
+    <div class="todo-form-container">
+        <form action="{% url 'add' %}" method="post" class="todo-form">
+            {% csrf_token %}
+            <input type="text" placeholder="Enter a task" name="todo" class="task-input" required>
+            <input type="submit" value="ADD" class="submit-btn">
+        </form>
+    </div>
+
+    <!-- Display Existing Tasks with Checkboxes and Delete Option -->
+    <div class="task-list">
+        {% for item in data %}
+            <div class="task-item {% if item.completed %}completed{% endif %}" id="task-{{ item.id }}">
+                <input type="checkbox" class="complete-checkbox" data-task-id="{{ item.id }}" {% if item.completed %}checked{% endif %}>
+                <h3>{{ item.content }}</h3>
+                <form action="{% url 'delete' item.id %}" method="post" class="delete-form">
+                    {% csrf_token %}
+                    <input type="submit" value="Delete" class="delete-btn">
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <script>
+        // Handle checkbox clicks
+        document.querySelectorAll('.complete-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const taskId = this.dataset.taskId;
+                const taskItem = document.getElementById(`task-${taskId}`);
+
+                if (this.checked) {
+                    taskItem.classList.add('completed');
+                    alert('Task completed');
+                } else {
+                    taskItem.classList.remove('completed');
+                }
+
+                // Make an AJAX request to update the task's completion status (optional)
+                // Here you can use fetch or XMLHttpRequest to update the server
+            });
+        });
+    </script>
+</body>
+</html>

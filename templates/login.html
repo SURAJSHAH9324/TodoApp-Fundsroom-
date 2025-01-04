@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <!-- Inline CSS for Login Page -->
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        /* Login Form Container */
+        .login-form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Login Form Styling */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Input Fields */
+        .input-field {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #4CAF50;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Register Link */
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            color: #45a049;
+        }
+
+        /* Messages Section */
+        .messages {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            color: #e74c3c;
+            margin: 0;
+        }
+
+        /* Add Responsiveness */
+        @media screen and (max-width: 480px) {
+            .login-form-container {
+                padding: 20px;
+            }
+            .submit-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Form Container -->
+    <div class="login-form-container">
+        <h2>Login Page</h2>
+        <!-- Login Form -->
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required class="input-field"><br>
+            <input type="password" name="password" placeholder="Password" required class="input-field"><br>
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+
+        <!-- Register Link -->
+        <p class="register-link">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+
+        <!-- Login Header Below Form -->
+       
+    </div>
+
+    <!-- Messages Section (if any) -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p class="message-text">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</body>
+</html>
